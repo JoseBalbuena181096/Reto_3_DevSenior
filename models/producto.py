@@ -59,16 +59,16 @@ class ProductoModel:
         
 
 
-productos = ProductoModel.obtener_todos()
-print(productos)
+# productos = ProductoModel.obtener_todos()
+# print(productos)
 
-producto = ProductoModel.obtener_por_id(1)
-print(producto)
+# producto = ProductoModel.obtener_por_id(1)
+# print(producto)
 
-ProductoModel.actualizar_stock(1, 10)
+# ProductoModel.actualizar_stock(1, 10)
 
-producto = ProductoModel.obtener_por_id(1)
-print(producto)
+# producto = ProductoModel.obtener_por_id(1)
+# print(producto)
 
-producto = ProductoModel.buscar_por_nombre('Fresa')
-print(producto)
+# producto = ProductoModel.buscar_por_nombre('Fresa')
+# print(producto)
