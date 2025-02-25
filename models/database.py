@@ -101,6 +101,5 @@ class DatabaseManager:
     
 
 
-db = DatabaseManager()
-db.insertar_productos_default()
+
 
