@@ -150,7 +150,7 @@ class CarritoFrame(ttk.LabelFrame):
         )
 
         if confirmacion:
-            self.venta_controller.lipiar_carrito()
+            self.venta_controller.limpiar_carrito()
             self.actualizar_carrito()
         
         

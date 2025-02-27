@@ -56,8 +56,138 @@ class MainView(tk.Tk):
         self.main_frame.columnconfigure(1, weight=1)
         self.main_frame.rowconfigure(0, weight=1)
 
+        # Frame de búsqueda 
+        self.search_frame = ttk.Frame(self.productos_frame)
+        self.search_frame.pack(fill=tk.X, padx=5, pady=5)
+
+        # Campo de búsqueda
+        ttk.Label(self.search_frame, text='Buscar:').pack(side=tk.LEFT, padx=5)
+        self.search_var = tk.StringVar()
+        self.search_entry = ttk.Entry(self.search_frame, textvariable=self.search_var)
+        self.search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
+
+        # Botón de búsquda
+        self.search_button = ttk.Button(self.search_frame, text="Buscar", command=self.buscar_productos)
+        self.search_button.pack(side=tk.LEFT, padx=5)
+
+        # Frame para mostrar los productos
+        self.productos_list_frame = ttk.Frame(self.productos_frame)
+        self.productos_list_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+        # Crear Treeview para mostrar productos
+        self.crear_tabla_productos()
+
+        # Frame para cantidad y botón agregar
+        self.cantidad_frame = ttk.Frame(self.productos_frame)
+        self.cantidad_frame.pack(fill=tk.X, padx=5, pady=5)
+
+        # Entrada para cantidad
+        ttk.Label(self.cantidad_frame, text='Cantidad').pack(side=tk.LEFT, padx=5)
+        self.cantidad_var = tk.StringVar(value='1')
+        self.cantidad_entry = ttk.Entry(self.cantidad_frame, textvariable=self.cantidad_var,  width=5)
+        self.cantidad_entry.pack(side=tk.LEFT, padx=5)
+
+        # Botón para agregar al carrito
+        self.agregar_button = ttk.Button(
+            self.cantidad_frame,
+            text="Agregar al carrito",
+            command=self.agregar_al_carrito
+        )
+        self.agregar_button.pack(side=tk.LEFT, padx=5)
+ 
+        
+    def agregar_al_carrito(self):
+        """Agrega un producto al carrito"""
+        try:
+            # Obtener producto seleccionado
+            seleccion = self.productos_tree.selection()
+            if not seleccion:
+                raise ProductoNoSeleccionadoError()
+            
+            # Obtener ID del producto seleccionado
+            producto_id = self.productos_tree.item(seleccion[0], "values")[0]
+            
+            # Obtener cantidad
+            cantidad = self.cantidad_var.get()
+            
+            # Agregar al carrito (esto validará el stock)
+            self.venta_controller.agregar_al_carrito(producto_id, cantidad)
+            
+            # Actualizar vista del carrito
+            self.carrito_frame.actualizar_carrito()
+            
+            # Recargar productos para mostrar stock actualizado
+            self.cargar_productos()
+            
+            # Limpiar selección
+            self.productos_tree.selection_remove(seleccion)
+            
+            # Restablecer cantidad a 1
+            self.cantidad_var.set("1")
+            
+        except (StockInsuficienteError, CantidadInvalidaError, ProductoNoSeleccionadoError) as e:
+            messagebox.showerror("Error", str(e.message))
+        except Exception as e:
+            messagebox.showerror("Error", f"Ocurrió un error inesperado: {str(e)}")
+
+    def crear_tabla_productos(self):
+        """Crea la tabla para mostrar los productos"""
+        # Scrollbar
+        scrollbar = ttk.Scrollbar(self.productos_list_frame)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Treeview (tabla)
+        columns = ("id", "nombre", "precio", "stock")
+        self.productos_tree = ttk.Treeview(
+            self.productos_list_frame,
+            columns=columns,
+            show="headings",
+            yscrollcommand=scrollbar.set
+        )
+        
+        # Configurar columnas
+        self.productos_tree.heading("id", text="ID")
+        self.productos_tree.heading("nombre", text="Producto")
+        self.productos_tree.heading("precio", text="Precio")
+        self.productos_tree.heading("stock", text="Stock")
+        
+        # Ajustar ancho de columnas
+        self.productos_tree.column("id", width=50)
+        self.productos_tree.column("nombre", width=200)
+        self.productos_tree.column("precio", width=100)
+        self.productos_tree.column("stock", width=100)
+        
+        # Empaquetar Treeview
+        self.productos_tree.pack(fill=tk.BOTH, expand=True)
+        
+        # Configurar scrollbar
+        scrollbar.config(command=self.productos_tree.yview)
+
+
+
     def cargar_productos(self):
         pass
+
+    def buscar_productos(self):
+        """Busca productos por nombre"""
+        texto_busqueda = self.search_var.get()
+        
+        # Si está vacío, mostrar todos los productos
+        if not texto_busqueda:
+            self.cargar_productos()
+            return
+        
+        # Limpiar tabla
+        for item in self.productos_tree.get_children():
+            self.productos_tree.delete(item)
+        
+        # Buscar productos
+        productos = ProductoController.buscar_productos(texto_busqueda)
+        
+        # Insertar productos en la tabla
+        for producto in productos:
+            self.productos_tree.insert("", tk.END, values=producto)
+
 
     def finalizar_compra(self):
         """Finaliza la compra actual"""
@@ -84,6 +214,8 @@ class MainView(tk.Tk):
                 self.cargar_productos()
             except Exception as e:
                 messagebox.showerror("Error", f"Error al finalizar la compra: {str(e)}")
+
+        
 
 
 # Función par iniciar la apñicación
