@@ -94,7 +94,17 @@ class MainView(tk.Tk):
             command=self.agregar_al_carrito
         )
         self.agregar_button.pack(side=tk.LEFT, padx=5)
- 
+
+        # Botón para ver historial
+        self.historial_button = ttk.Button(
+            self.productos_frame,
+            text="Ver historial de Ventas",
+            command=self.ver_historial
+        )
+        self.historial_button.pack(side=tk.BOTTOM, padx=5, pady=10, anchor=tk.E)
+
+
+
         
     def agregar_al_carrito(self):
         """Agrega un producto al carrito"""
@@ -116,19 +126,19 @@ class MainView(tk.Tk):
             # Actualizar vista del carrito
             self.carrito_frame.actualizar_carrito()
             
-            # Recargar productos para mostrar stock actualizado
-            self.cargar_productos()
-            
             # Limpiar selección
             self.productos_tree.selection_remove(seleccion)
             
-            # Restablecer cantidad a 1
+            # Recargar productos para mostrar stock actualizado
+            self.cargar_productos()
+            
+                        # Restablecer cantidad a 1
             self.cantidad_var.set("1")
             
         except (StockInsuficienteError, CantidadInvalidaError, ProductoNoSeleccionadoError) as e:
             messagebox.showerror("Error", str(e.message))
         except Exception as e:
-            messagebox.showerror("Error", f"Ocurrió un error inesperado: {str(e)}")
+             messagebox.showerror("Error", f"Ocurrió un error inesperado: {str(e)}")
 
     def crear_tabla_productos(self):
         """Crea la tabla para mostrar los productos"""
@@ -164,9 +174,22 @@ class MainView(tk.Tk):
         scrollbar.config(command=self.productos_tree.yview)
 
 
+    def ver_historial(self):
+        """  Abre la ventana del historial de ventas """
+        pass
 
     def cargar_productos(self):
-        pass
+        """Carga los productos en la tabla"""
+        # Limpiar tabla
+        for item in self.productos_tree.get_children():
+            self.productos_tree.delete(item)
+        
+        # Obtener productos del controlador
+        productos = ProductoController.obtener_productos()
+        
+        # Insertar productos en la tabla
+        for producto in productos:
+            self.productos_tree.insert("", tk.END, values=producto)
 
     def buscar_productos(self):
         """Busca productos por nombre"""
