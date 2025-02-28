@@ -12,7 +12,7 @@ class HistorialVentasWindow(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
         self.title("Historial de Ventas")
-        self.geometry("800x600")
+        self.geometry("800x700")
         self.resizable(True, True)
         
         # Hacer ventana modal

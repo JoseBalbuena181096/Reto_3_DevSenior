@@ -8,6 +8,7 @@ from controllers.producto_controller import ProductoController
 from controllers.venta_controller import VentaController
 from utils.excepciones import StockInsuficienteError, CantidadInvalidaError, ProductoNoSeleccionadoError
 from views.carrito_view import CarritoFrame
+from views.historial_view import HistorialVentasWindow
 
 class MainView(tk.Tk):
     """Vista principal de la aplicación"""
@@ -176,7 +177,7 @@ class MainView(tk.Tk):
 
     def ver_historial(self):
         """  Abre la ventana del historial de ventas """
-        pass
+        HistorialVentasWindow(self)
 
     def cargar_productos(self):
         """Carga los productos en la tabla"""
@@ -246,4 +247,4 @@ def iniciar_aplicacion():
     app = MainView()
     app.mainloop()
 
-iniciar_aplicacion()
+# iniciar_aplicacion()
