@@ -123,7 +123,7 @@ Las contribuciones son bienvenidas. Por favor abre un issue primero para discuti
 ## Autor ✒️
 
 - **José Ángel Balbuena Palma** - *Desarrollo Inicial*
--  Ver video de funcionamiento  [AQUÍ](https://www.youtube.com/watch?v=711KrOxIIcA) 
+-  Ver video de funcionamiento  [AQUÍ](https://www.youtube.com/watch?v=LZx5KLmiqAU) 
 
 ## Licencia 📄
 
